@@ -1,7 +1,7 @@
 Request time limiter is a HTTP flask based service to limit request which exceeds certain amount.
 
 User instruction:
-It is allowed to set custom variables to a server. To od this read docker-compose.yaml comments section.
+It is allowed to set custom variables to a server. To do this read docker-compose.yaml comments section.
 
     input:
         sudo docker-compose up
