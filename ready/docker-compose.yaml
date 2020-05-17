@@ -1,0 +1,16 @@
+version: '3'
+services:
+  app:
+    image: driver220v/rate_limiter
+    ports:
+    # set your port bind here
+      - 8000:8080
+    # time_window = Set time-window. Within this window requests will be accepted.
+    # if time window exceeds, it will be restarted
+    #
+    # limit = allowed request amount
+    #
+    # mask  = set subnet mask
+    #
+    # ban_duration = duration of a ban in seconds, within which service will throw 429 error
+    entrypoint: python3 main.py --time_window=10 --limit=10 --mask='24' --ban_duration=15.0 --port=8080 --host='0.0.0.0'
