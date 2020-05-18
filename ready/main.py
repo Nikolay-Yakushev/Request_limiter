@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser(description='request limiter server')
 parser.add_argument('-w', '--time_window',
                     help="""Set time-window. Within this window requests will be accepted/.
                       if time window exceeds, it will be restarted""",
-                    type=int, default=60)
+                    type=float, default=60.0)
 
 parser.add_argument('-l', '--limit', help="allowed request amount", type=int, default=100)
 parser.add_argument('-m', '--mask', help="set subnet mask", type=str, default='24')
