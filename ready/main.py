@@ -118,6 +118,4 @@ def change_limiter(prefix):
 
 
 if __name__ == '__main__':
-    import argparse
-
     app.run(host=args.host, port=args.port)
