@@ -2,13 +2,14 @@ import argparse
 import ipaddress
 import time
 from typing import ClassVar
+
 from flask import Flask, request, abort, jsonify
 
 parser = argparse.ArgumentParser(description='request limiter server')
 parser.add_argument('-w', '--time_window',
                     help="""Set time-window. Within this window requests will be accepted/.
                       if time window exceeds, it will be restarted""",
-                    type=int, default=10)
+                    type=float, default=60.0)
 
 parser.add_argument('-l', '--limit', help="allowed request amount", type=int, default=100)
 parser.add_argument('-m', '--mask', help="set subnet mask", type=str, default='24')
@@ -112,12 +113,11 @@ def change_limiter(prefix):
         # Example: either /24 or 123.45.67.0
         if str(subnet) == prefix or args.mask == prefix:
             banned_lst.remove((subnet, unban_t))
+            subnet_counter[subnet]=0
             return jsonify({'status ': 'null'})
         else:
             return jsonify({'status': 'wrong. type entire subnet like 123.45.67.0'})
 
 
 if __name__ == '__main__':
-    import argparse
-
     app.run(host=args.host, port=args.port)
