@@ -77,8 +77,9 @@ def handle_request():
     subnet = get_subnet(ip_addr, args.mask)
     banTrue, unban_t = is_banned(subnet)
     if banTrue:
-        if unban_t - now_t > 0:
-            return abort(429, f'{unban_t - now_t}')  # 12307435234.0423423 - 12334534534.032423 => 11.5
+        ban_time_left = unban_t - now_t
+        if ban_time_left > 0:
+            return abort(429, f'{ban_time_left}')  # 12307435234.0423423 - 12334534534.032423 => 11.5
         else:
             banned_lst.remove((subnet, unban_t))
             count_subnet(subnet)
