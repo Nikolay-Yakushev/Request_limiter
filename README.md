@@ -14,3 +14,10 @@ It is allowed to set custom variables to a server. To do this read docker-compos
         app_1  |  * Debug mode: off
         app_1  |  * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
 
+Tests:
+    run server via docker :
+    
+            sudo docker-compose up      
+Run tests:
+
+    python3 test.py
