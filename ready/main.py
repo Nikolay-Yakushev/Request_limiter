@@ -3,7 +3,8 @@ import ipaddress
 import time
 from typing import ClassVar
 
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, json
+from werkzeug.exceptions import BadRequest, TooManyRequests, MethodNotAllowed, NotFound
 
 parser = argparse.ArgumentParser(description='request limiter server')
 parser.add_argument('-w', '--time_window',
@@ -91,8 +92,41 @@ def handle_request():
         return 'ok'
 
 
-@app.errorhandler(429)
-def handle_exception(error):
+@app.errorhandler(BadRequest)  # 400
+def handle_BadRequest(error):
+    response = error.get_response()
+    response.data = json.dumps({
+        'name': error.name,
+        'code': error.code,
+    })
+    return response
+
+
+# Not Found
+@app.errorhandler(NotFound)  # 404
+def handle_NotFound(error):
+    response = error.get_response()
+    response.data = json.dumps({
+        'name': error.name,
+        'code': error.code,
+    })
+    return response
+
+
+# Method Not Allowed
+@app.errorhandler(MethodNotAllowed)  # 405
+def handle_Method_Not_Allowed(error):
+    response = error.get_response()
+    response.data = json.dumps({
+        'name': error.name,
+        'code': error.code,
+    })
+    return response
+
+
+# Too Many Requests
+@app.errorhandler(TooManyRequests)  # 429
+def handle_TooManyRequests(error):
     response = error.get_response()
     response.headers['Retry-After'] = error.description
     return response
@@ -106,6 +140,8 @@ def handle_exception(error):
 # subnet prefix = 123.45.67.0
 # prefix  = /24
 def change_limiter(prefix):
+    if not isinstance(prefix, int):
+        return abort(400)
     if len(banned_lst) == 0:
         return jsonify({'status': 'ban list is empty'})
     for subnet, unban_t in banned_lst:
@@ -113,7 +149,7 @@ def change_limiter(prefix):
         # Example: either /24 or 123.45.67.0
         if str(subnet) == prefix or args.mask == prefix:
             banned_lst.remove((subnet, unban_t))
-            subnet_counter[subnet]=0
+            subnet_counter[subnet] = 0
             return jsonify({'status ': 'null'})
         else:
             return jsonify({'status': 'wrong. type entire subnet like 123.45.67.0'})
